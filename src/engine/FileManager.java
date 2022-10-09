@@ -53,10 +53,10 @@ public final class FileManager {
 	 * Loads sprites from disk.
 	 *
 	 * @param spriteMap
-	 *            Mapping of sprite type and empty boolean matrix that will
-	 *            contain the image.
+	 *                  Mapping of sprite type and empty boolean matrix that will
+	 *                  contain the image.
 	 * @throws IOException
-	 *             In case of loading problems.
+	 *                     In case of loading problems.
 	 */
 	public void loadSprite(final Map<SpriteType, boolean[][]> spriteMap)
 			throws IOException {
@@ -64,11 +64,11 @@ public final class FileManager {
 
 		try {
 			String graphicsName;
-			if(playerShipLevel == 0){
+			if (playerShipLevel == 0) {
 				graphicsName = "graphics";
-			}else if(playerShipLevel == 1){
+			} else if (playerShipLevel == 1) {
 				graphicsName = "graphics_1";
-			}else
+			} else
 				graphicsName = "graphics_2";
 			inputStream = DrawManager.class.getClassLoader()
 					.getResourceAsStream(graphicsName);
@@ -105,11 +105,11 @@ public final class FileManager {
 
 		try {
 			String graphicsName;
-			if(permanentState.getShipShape() == 0){
+			if (permanentState.getShipShape() == 0) {
 				graphicsName = "graphics";
-			}else if(permanentState.getShipShape() == 1){
+			} else if (permanentState.getShipShape() == 1) {
 				graphicsName = "graphics_1";
-			}else
+			} else
 				graphicsName = "graphics_2";
 			inputStream = DrawManager.class.getClassLoader()
 					.getResourceAsStream(graphicsName);
@@ -143,12 +143,12 @@ public final class FileManager {
 	 * Loads a font of a given size.
 	 *
 	 * @param size
-	 *            Point size of the font.
+	 *             Point size of the font.
 	 * @return New font.
 	 * @throws IOException
-	 *             In case of loading problems.
+	 *                             In case of loading problems.
 	 * @throws FontFormatException
-	 *             In case of incorrect font format.
+	 *                             In case of incorrect font format.
 	 */
 	public Font loadFont(final float size) throws IOException,
 			FontFormatException {
@@ -175,7 +175,7 @@ public final class FileManager {
 	 *
 	 * @return Default high scores.
 	 * @throws IOException
-	 *             In case of loading problems.
+	 *                     In case of loading problems.
 	 */
 	private List<Score> loadDefaultHighScores() throws IOException {
 		List<Score> highScores = new ArrayList<Score>();
@@ -211,7 +211,7 @@ public final class FileManager {
 	 *
 	 * @return Sorted list of scores - players.
 	 * @throws IOException
-	 *             In case of loading problems.
+	 *                     In case of loading problems.
 	 */
 	public List<Score> loadHighScores() throws IOException {
 
@@ -263,9 +263,9 @@ public final class FileManager {
 	 * Saves user high scores to disk.
 	 *
 	 * @param highScores
-	 *            High scores to save.
+	 *                   High scores to save.
 	 * @throws IOException
-	 *             In case of loading problems.
+	 *                     In case of loading problems.
 	 */
 	public void saveHighScores(final List<Score> highScores)
 			throws IOException {
@@ -365,7 +365,7 @@ public final class FileManager {
 		OutputStream outputStream = null;
 		BufferedWriter bufferedWriter = null;
 
-		try	{
+		try {
 			String jarPath = FileManager.class.getProtectionDomain()
 					.getCodeSource().getLocation().getPath();
 			jarPath = URLDecoder.decode(jarPath, "UTF-8");
@@ -403,7 +403,8 @@ public final class FileManager {
 					Integer.toString(gamestate.getScore()) + ' ' +
 					Integer.toString(gamestate.getLivesRemaining()) + ' ' +
 					Integer.toString(gamestate.getBulletsShot()) + ' ' +
-					Integer.toString(gamestate.getShipsDestroyed());
+					Integer.toString(gamestate.getShipsDestroyed()) + ' ' +
+					Integer.toString(gamestate.getBullet());
 			save.write(state);
 			save.close();
 		} catch (Exception e) {
@@ -411,8 +412,8 @@ public final class FileManager {
 		}
 	}
 
-	public String[] loadInfo(){
-		String[] array = {"1","0","3","0","0"};
+	public String[] loadInfo() {
+		String[] array = { "1", "0", "3", "0", "0" };
 		try {
 			String jarPath = FileManager.class.getProtectionDomain()
 					.getCodeSource().getLocation().getPath();
@@ -425,14 +426,12 @@ public final class FileManager {
 			String save_info = br.readLine();
 			array = save_info.split(" ");
 			logger.info("Finish loading.");
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			logger.info("Save file is not found.");
 			logger.info("Starting New Game.");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		finally{
+		} finally {
 			return array;
 		}
 	}
@@ -457,4 +456,3 @@ public final class FileManager {
 		return playerShipLevel;
 	}
 }
-

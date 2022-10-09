@@ -24,28 +24,31 @@ public class GameState {
 	/** Ships destroyed until now. */
 	private int shipsDestroyed;
 
+	private int bulletCount;
+
 	/**
 	 * Constructor.
 	 * 
 	 * @param level
-	 *            Current game level.
+	 *                       Current game level.
 	 * @param score
-	 *            Current score.
+	 *                       Current score.
 	 * @param livesRemaining
-	 *            Lives currently remaining.
+	 *                       Lives currently remaining.
 	 * @param bulletsShot
-	 *            Bullets shot until now.
+	 *                       Bullets shot until now.
 	 * @param shipsDestroyed
-	 *            Ships destroyed until now.
+	 *                       Ships destroyed until now.
 	 */
 	public GameState(final int level, final int score,
 			final int livesRemaining, final int bulletsShot,
-			final int shipsDestroyed) {
+			final int shipsDestroyed, final int bulletCount) {
 		this.level = level;
 		this.score = score;
 		this.livesRemaining = livesRemaining;
 		this.bulletsShot = bulletsShot;
 		this.shipsDestroyed = shipsDestroyed;
+		this.bulletCount = bulletCount;
 	}
 
 	/**
@@ -83,4 +86,7 @@ public class GameState {
 		return shipsDestroyed;
 	}
 
+	public final int getBullet() {
+		return bulletCount;
+	}
 }
