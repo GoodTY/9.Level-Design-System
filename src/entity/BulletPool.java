@@ -26,12 +26,13 @@ public final class BulletPool {
 	 * isn't.
 	 * 
 	 * @param positionX
-	 *            Requested position of the bullet in the X axis.
+	 *                  Requested position of the bullet in the X axis.
 	 * @param positionY
-	 *            Requested position of the bullet in the Y axis.
+	 *                  Requested position of the bullet in the Y axis.
 	 * @param speed
-	 *            Requested speed of the bullet, positive or negative depending
-	 *            on direction - positive is down.
+	 *                  Requested speed of the bullet, positive or negative
+	 *                  depending
+	 *                  on direction - positive is down.
 	 * @return Requested bullet.
 	 */
 	public static Bullet getBullet(final int positionX,
@@ -55,7 +56,7 @@ public final class BulletPool {
 	 * Adds one or more bullets to the list of available ones.
 	 * 
 	 * @param bullet
-	 *            Bullets to recycle.
+	 *               Bullets to recycle.
 	 */
 	public static void recycle(final Set<Bullet> bullet) {
 		pool.addAll(bullet);

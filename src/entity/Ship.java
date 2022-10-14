@@ -30,15 +30,15 @@ public class Ship extends Entity {
 	/** Time spent inactive between hits. */
 	private Cooldown destructionCooldown;
 
-//	private Shield shield;
+	// private Shield shield;
 
 	/**
 	 * Constructor, establishes the ship's properties.
 	 * 
 	 * @param positionX
-	 *            Initial position of the ship in the X axis.
+	 *                  Initial position of the ship in the X axis.
 	 * @param positionY
-	 *            Initial position of the ship in the Y axis.
+	 *                  Initial position of the ship in the Y axis.
 	 */
 	public Ship(final int positionX, final int positionY) {
 		super(positionX, positionY, 13 * 2, 8 * 2, Color.GREEN);
@@ -51,8 +51,9 @@ public class Ship extends Entity {
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
 		this.destructionCooldown = Core.getCooldown(1000);
 	}
+
 	public Ship(final int positionX, final int positionY, int shipLevel) {
-        super(positionX, positionY, 13 * 2, 8 * 2, Color.BLUE);
+		super(positionX, positionY, 13 * 2, 8 * 2, Color.BLUE);
 
 		this.SHOOTING_INTERVAL = INIT_SHOOTING_INTERVAL = 700;
 		this.BULLET_SPEED = INIT_BULLET_SPEED = -6;
@@ -61,7 +62,8 @@ public class Ship extends Entity {
 		this.spriteType = SpriteType.Ship;
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
 		this.destructionCooldown = Core.getCooldown(1000);
-    }
+	}
+
 	public Ship(final int positionX, final int positionY, char shipLevel) {
 		super(positionX, positionY, 13 * 2, 8 * 2, Color.darkGray);
 
@@ -75,42 +77,37 @@ public class Ship extends Entity {
 	}
 
 	/**
-	 *	get level of ship
+	 * get level of ship
+	 * 
 	 * @return shipLevel
 	 */
-	public int getShipLevel(){
+	public int getShipLevel() {
 		return this.shipLevel;
 	}
-
-
-
-
 
 	/**
 	 * Moves the ship speed uni ts right, or until the right screen border is
 	 * reached.
 	 */
-	public final void moveRight()
-	{
+	public final void moveRight() {
 		this.positionX += SPEED;
-//		shield.moveRight();
+		// shield.moveRight();
 	}
 
 	/**
 	 * Moves the ship speed units left, or until the left screen border is
 	 * reached.
 	 */
-	public final void moveLeft()
-	{
+	public final void moveLeft() {
 		this.positionX -= SPEED;
-//		shield.moveRight();
+		// shield.moveRight();
 	}
 
 	/**
 	 * Shoots a bullet upwards.
 	 * 
 	 * @param bullets
-	 *            List of bullets on screen, to add the new bullet.
+	 *                List of bullets on screen, to add the new bullet.
 	 * @return Checks if the bullet was shot correctly.
 	 */
 	public final boolean shoot(final Set<Bullet> bullets) {
@@ -157,13 +154,28 @@ public class Ship extends Entity {
 	public final double getSpeed() {
 		return SPEED;
 	}
-	public final int getShootingInterval() {return SHOOTING_INTERVAL;}
-	public final int getBulletSpeed() {return BULLET_SPEED;}
-	public void setShootingInterval(int setshootinterval){SHOOTING_INTERVAL = setshootinterval;}
-	public void setBulletSpeed(int setbulletspeed){BULLET_SPEED = setbulletspeed;}
-	public void setShipSpeed(double setshipspeed) {SPEED = setshipspeed;}
 
-	public void setInitState(){
+	public final int getShootingInterval() {
+		return SHOOTING_INTERVAL;
+	}
+
+	public final int getBulletSpeed() {
+		return BULLET_SPEED;
+	}
+
+	public void setShootingInterval(int setshootinterval) {
+		SHOOTING_INTERVAL = setshootinterval;
+	}
+
+	public void setBulletSpeed(int setbulletspeed) {
+		BULLET_SPEED = setbulletspeed;
+	}
+
+	public void setShipSpeed(double setshipspeed) {
+		SPEED = setshipspeed;
+	}
+
+	public void setInitState() {
 		SPEED = INIT_SPEED;
 		SHOOTING_INTERVAL = INIT_SHOOTING_INTERVAL;
 		BULLET_SPEED = INIT_BULLET_SPEED;
