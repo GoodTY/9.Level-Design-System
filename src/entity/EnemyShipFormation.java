@@ -37,8 +37,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Downwards speed of the formation. */
 	private static final int Y_SPEED = 4;
 	/** Speed of the bullets shot by the members. */
-	private static final int BULLET_SPEED = 4;
-	/** Proportion of differences between shooting times. */
 	private static final double SHOOTING_VARIANCE = .2;
 	/** Margin on the sides of the screen. */
 	private static final int SIDE_MARGIN = 20;
@@ -94,6 +92,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private List<EnemyShip> shooters;
 	/** Number of not destroyed ships. */
 	private int shipCount;
+	/** counts of enemies that can shoot */
+	private int count;
 
 	/** Directions the formation can move. */
 	private enum Direction {
@@ -344,17 +344,15 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * @param bullets
 	 *                Bullets set to add the bullet being shot.
 	 */
-	public final void shoot(final Set<Bullet> bullets, final int count) {
+	public final void shoot(final Set<Bullet> bullets, final int speed) {
 		// For now, only ships in the bottom row are able to shoot.
 		int index = (int) (Math.random() * this.shooters.size());
 		EnemyShip shooter = this.shooters.get(index);
 
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
-			for (int i = 0; i < count; i++) {
-				bullets.add(BulletPool.getBullet(shooter.getPositionX()
-						+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
-			}
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ shooter.width / 2, shooter.getPositionY(), speed));
 		}
 	}
 
@@ -387,9 +385,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			EnemyShip nextShooter = getNextShooter(this.enemyShips
 					.get(destroyedShipColumnIndex));
 
-			if (nextShooter != null)
-				this.shooters.set(destroyedShipIndex, nextShooter);
-			else {
+			if (nextShooter != null) {
+				for (int i = 0; i < this.count; i++)
+					this.shooters.set(destroyedShipIndex, nextShooter);
+			} else {
 				this.shooters.remove(destroyedShipIndex);
 				this.logger.info("Shooters list reduced to "
 						+ this.shooters.size() + " members.");
