@@ -79,6 +79,8 @@ public final class DrawManager {
 		/** Bonus ship. */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
+		EnemyShipdangerous,
+
 		Explosion,
 
 		ItemDrop,
@@ -118,7 +120,8 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.ItemDrop, new boolean[5][5]);
 			spriteMap.put(SpriteType.ItemGet, new boolean[5][5]);
 			spriteMap.put(SpriteType.Shield, new boolean[13][1]);
-      spriteMap.put(SpriteType.Life, new boolean[13][13]);
+			spriteMap.put(SpriteType.Life, new boolean[13][13]);
+			spriteMap.put(SpriteType.EnemyShipdangerous, new boolean[16][7]);
 
 			fileManager.readship();//read ship파일
 			fileManager.loadSprite(spriteMap);
@@ -422,6 +425,7 @@ public final class DrawManager {
 	public void drawResults(final Screen screen, final int score,
 			final int livesRemaining, final int shipsDestroyed,
 			final float accuracy, final boolean isNewRecord) {
+
 		String scoreString = String.format("score %04d", score);
 		String livesRemainingString = "lives remaining " + livesRemaining;
 		String shipsDestroyedString = "enemies destroyed " + shipsDestroyed;
@@ -628,10 +632,11 @@ public final class DrawManager {
 		backBufferGraphics.setColor(Color.WHITE);
 		int i = 0;
 		String scoreString = "";
-
+		
 		for (Score score : highScores) {
-			scoreString = String.format("%s        %04d", score.getName(),
-					score.getScore());
+
+			scoreString = String.format("%s        %04d        %.2f%%", score.getName(),
+					score.getScore(), score.getPer() * 100);
 			drawCenteredRegularString(screen, scoreString, screen.getHeight()
 					/ 4 + fontRegularMetrics.getHeight() * (i + 1) * 2);
 			i++;
@@ -707,28 +712,37 @@ public final class DrawManager {
 
 	public void drawStoreGacha(final Screen screen, final int menu, final int focus) {
 		String rerollString = "reroll!(100$)";
+		String coinLackString = "Not enough coins!";
 		PermanentState permanentState = PermanentState.getInstance();
 		if (focus == 0)
 			backBufferGraphics.setColor(Color.WHITE);
-		else
+		else {
 			backBufferGraphics.setColor(Color.GREEN);
+			if (permanentState.getCoin() < 100) {
+				backBufferGraphics.setColor(Color.RED);
+				backBufferGraphics.drawString(coinLackString, screen.getWidth() / 2 + 20,
+						screen.getHeight() / 2 + 180);
+			}
+		}
 		backBufferGraphics.drawRect(screen.getWidth() / 2 + 50, screen.getHeight() / 2, 100, 100);
 		backBufferGraphics.drawString(rerollString, screen.getWidth() / 2 + 100 - fontRegularMetrics.stringWidth(rerollString) / 2, screen.getWidth() / 2 + 180);
 
 		if(menu < 2) { // shape, color
 			try{
 				fileManager.loadSprite_Temp(spriteMap);
+				FileManager.setPlayerShipShape();
 			}
 			catch (IOException e){
 				logger.warning("Loading failed.");
 			}
 
+			FileManager.setPlayerShipColor(permanentState.getShipColor());
 			if (permanentState.getShipColor() == 0)
-				drawEntity(new Ship(0, 0), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
+				drawEntity(new Ship(0, 0, FileManager.ChangeIntToColor()), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
 			if (permanentState.getShipColor() == 1)
-				drawEntity(new Ship(0, 0, 0), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
+				drawEntity(new Ship(0, 0, 0, FileManager.ChangeIntToColor()), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
 			if (permanentState.getShipColor() == 2)
-				drawEntity(new Ship(0, 0, '0'), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
+				drawEntity(new Ship(0, 0, '0', FileManager.ChangeIntToColor()), screen.getWidth() / 2 + 89, screen.getHeight() / 2 + 42);
 		}
 		else if(menu == 2){ // bullet efx
 
@@ -802,9 +816,17 @@ public final class DrawManager {
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
 			if (!bonusLife) {
-				drawCenteredBigString(screen, "Level " + level,
-						screen.getHeight() / 2
-						+ fontBigMetrics.getHeight() / 3);
+				if (level == 8){
+					drawCenteredBigString(screen, "Boss Stage",
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
+				}
+				else {
+					drawCenteredBigString(screen, "Level " + level,
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
+				}
+
 			} else {
 				drawCenteredBigString(screen, "Level " + level
 						+ " - Bonus life!",
