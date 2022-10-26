@@ -1,6 +1,5 @@
 package entity;
 
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,7 +21,6 @@ import engine.GameSettings;
  * 
  */
 public class EnemyShipFormation implements Iterable<EnemyShip> {
-
 
 	private static int Current_Level = 0;
 	/**
@@ -57,7 +55,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/**
 	 * Speed of the bullets shot by the members.
 	 */
-	private static final int BULLET_SPEED = 4;
 	/**
 	 * Proportion of differences between shooting times.
 	 */
@@ -239,8 +236,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 				column.add(new EnemyShip((SEPARATION_DISTANCE
 						* this.enemyShips.indexOf(column))
-						+ positionX, (SEPARATION_DISTANCE * i)
-						+ positionY, spriteType));
+						+ positionX,
+						(SEPARATION_DISTANCE * i)
+								+ positionY,
+						spriteType));
 				this.shipCount++;
 			}
 		}
@@ -268,7 +267,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public List<List<EnemyShip>> getEnemyShip() {
 		return this.enemyShips;
 	}
-
 
 	/**
 	 * Associates the formation to a given screen.
@@ -361,6 +359,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				movementX = X_SPEED;
 			else if (currentDirection == Direction.LEFT)
 				movementX = -X_SPEED;
+
 			else
 				movementY = Y_SPEED;
 
@@ -398,6 +397,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 						} else if (inverse == 1) {
 							movementY = SPEED_CONTROL * (-1);
+
 
 						}
 						enemyShip.move(movementX, movementY);
@@ -461,10 +461,30 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		int index = (int) (Math.random() * this.shooters.size());
 		EnemyShip shooter = this.shooters.get(index);
 
-		if (this.shootingCooldown.checkFinished()) {
-			this.shootingCooldown.reset();
-			bullets.add(BulletPool.getBullet(shooter.getPositionX()
-					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
+		switch (shooter.spriteType) {
+			case EnemyShipB1:
+			case EnemyShipB2:
+				if (this.shootingCooldown.checkFinished()) {
+					this.shootingCooldown.reset();
+					bullets.add(BulletPool.getBullet(shooter.getPositionX()
+							+ shooter.width / 2, shooter.getPositionY(), Current_Level));
+				}
+				break;
+			case EnemyShipC1:
+			case EnemyShipC2:
+				if (this.shootingCooldown.checkFinished()) {
+					this.shootingCooldown.reset();
+					bullets.add(BulletPool.getBullet(shooter.getPositionX()
+							+ shooter.width / 2, shooter.getPositionY(), Current_Level + 3));
+				}
+				break;
+			default:
+				if (this.shootingCooldown.checkFinished()) {
+					this.shootingCooldown.reset();
+					bullets.add(BulletPool.getBullet(shooter.getPositionX()
+							+ shooter.width / 2, shooter.getPositionY(), 4));
+				}
+				break;
 		}
 	}
 
@@ -549,7 +569,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
 	}
-
 
 	/**
 	 * Getter for the enemyship's speed.
