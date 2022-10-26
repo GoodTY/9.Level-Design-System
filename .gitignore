@@ -209,4 +209,14 @@ $RECYCLE.BIN/
 # Cusotmized by Hansae Ju
 log
 *.iml
+<<<<<<< HEAD
 project.iml
+=======
+project.iml
+
+# Ignore IDE env Files
+*.iml
+.vscode
+
+Run.xml
+>>>>>>> f223ce5411c74d13f414e29317ea3210e54b09d7

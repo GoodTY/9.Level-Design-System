@@ -25,7 +25,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 
 	private static int Current_Level = 0;
-	/** Initial position in the x-axis. */
+	/**
+	 * Initial position in the x-axis.
+	 */
 
 	private static final int INIT_POS_X = 20;
 	/**
@@ -184,13 +186,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		 */
 		LEFT,
 
+
 		/**
 		 * Movement to the bottom of the screen.
 		 */
 		DOWN
 	}
-
-	;
 
 
 	/**
@@ -307,14 +308,15 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				/ (this.nShipsHigh * this.nShipsWide);
 
 		this.movementSpeed = (double) (Math.pow(remainingProportion, 2)
-					* this.baseSpeed);
+				* this.baseSpeed);
 
-		if(baseSpeed > 0)
+		if (baseSpeed > 0)
 			this.movementSpeed += MINIMUM_SPEED;
 
 		movementInterval++;
 		if (movementInterval >= this.movementSpeed) {
-				movementInterval = 0;
+			movementInterval = 0;
+
 			boolean isAtTop = positionY + this.height <= BOTTOM_MARGIN;
 			boolean isAtBottom = positionY
 					+ this.height > screen.getHeight() - BOTTOM_MARGIN;
@@ -381,11 +383,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.removeAll(destroyed);
 			}
 
-			if (isAtBottom){
-				positionY = positionY*(-1);
+			if (isAtBottom) {
+				positionY = positionY * (-1);
 				inverse = 1;
-			}
-			else if (isAtTop)
+			} else if (isAtTop)
 				inverse = 0;
 
 			for (List<EnemyShip> column : this.enemyShips) {
@@ -396,12 +397,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							movementY = SPEED_CONTROL;
 
 						} else if (inverse == 1) {
-							movementY = SPEED_CONTROL*(-1);
-						}
+							movementY = SPEED_CONTROL * (-1);
 
+						}
+						enemyShip.move(movementX, movementY);
+						enemyShip.update();
 					}
-					enemyShip.move(movementX, movementY);
-					enemyShip.update();
 				}
 			}
 		}
@@ -480,7 +481,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					this.logger.info("Destroyed ship in ("
 							+ this.enemyShips.indexOf(column) + "," + i + ")");
 				}
-
 		// Updates the list of ships that can shoot the player.
 		if (this.shooters.contains(destroyedShip)) {
 			int destroyedShipIndex = this.shooters.indexOf(destroyedShip);
