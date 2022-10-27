@@ -38,6 +38,10 @@ public class EnemyShip extends Entity {
 	private int pointValue;
 
 	private final int ITEM_SPEED = 2;
+
+	/** lives of the boss. */
+	public int bossLives;
+
 	/**
 	 * Constructor, establishes the ship's properties.
 	 * 
@@ -61,6 +65,12 @@ public class EnemyShip extends Entity {
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
 		this.isDestroyed = false;
+
+		float livesRate = (float)(Math.round(Math.random()*10)/10.0);
+		if (livesRate <= 0.5) {
+			this.bossLives = 2;
+		}
+		else this.bossLives = 1;
 
 		switch (this.spriteType) {
 		case EnemyShipA1:
