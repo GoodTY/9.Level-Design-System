@@ -2,9 +2,9 @@ package entity;
 
 import java.awt.Color;
 
-import engine.Core;
 import engine.DrawManager.SpriteType;
 import engine.GameSettings;
+
 
 
 /**
@@ -21,7 +21,6 @@ public class Bullet extends Entity {
 	 */
 	private int speed;
 
-	GameSettings gameSettings;
 	private static int Current_Level = 0;
 	Color[] colors = {Color.WHITE, Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.BLUE};
 
@@ -50,12 +49,12 @@ public class Bullet extends Entity {
 	 */
 	public final void setSprite() {
 
-
-		Current_Level = gameSettings.getLevel();
-		LOGGER.info(Current_Level);
 		if (speed < 0) {
 			this.spriteType = SpriteType.Bullet;
 			this.setColor(colors[(int) ((Math.random() * (12 - 1)) + 1)]);
+		}
+		else if (Current_Level == 8){
+			this.setColor(Color.RED);
 		}
 		else {
 			this.spriteType = SpriteType.EnemyBullet;
