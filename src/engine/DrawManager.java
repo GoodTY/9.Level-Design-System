@@ -92,7 +92,11 @@ public final class DrawManager {
 		Shield,
     
     /** Life shape */
-		Life
+		Life,
+		/** About BossAttack*/
+
+		BossAttack
+
 
 	};
 
@@ -124,6 +128,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Shield, new boolean[13][1]);
 			spriteMap.put(SpriteType.Life, new boolean[13][13]);
 			spriteMap.put(SpriteType.EnemyShipdangerous, new boolean[16][7]);
+
 
 			fileManager.readship();//read ship파일
 			fileManager.loadSprite(spriteMap);

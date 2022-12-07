@@ -1,5 +1,6 @@
 package entity;
 import java.awt.Color;
+import java.util.Random;
 import java.util.Set;
 
 import engine.Cooldown;
@@ -41,6 +42,7 @@ public class EnemyShip extends Entity {
 
 	/** lives of the boss. */
 	public int bossLives = 2;
+	//bossMeteor
 
 	/**
 	 * Constructor, establishes the ship's properties.

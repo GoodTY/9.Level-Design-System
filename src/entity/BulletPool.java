@@ -1,5 +1,7 @@
 package entity;
 
+import engine.GameSettings;
+
 import java.util.HashSet;
 import java.util.Set;
 

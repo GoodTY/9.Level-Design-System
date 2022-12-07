@@ -1,5 +1,8 @@
 package entity;
 
+
+import java.util.HashMap;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,6 +16,7 @@ import engine.Core;
 import engine.DrawManager;
 import engine.DrawManager.SpriteType;
 import engine.GameSettings;
+
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -74,20 +78,21 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/**
 	 * Minimum speed allowed.
 	 */
+/*test*/
 	private static final int MINIMUM_SPEED = 10;
 	/**
 	 * Speed control in update
 	 */
-	private static int SPEED_CONTROL = 1;
+	private static final int SPEED_CONTROL = 1;
 
 	/**
 	 * DrawManager instance.
 	 */
-	private DrawManager drawManager;
+	private final DrawManager drawManager;
 	/**
 	 * Application logger.
 	 */
-	private Logger logger;
+	private final Logger logger;
 	/**
 	 * Screen to draw ships on.
 	 */
@@ -96,7 +101,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/**
 	 * List of enemy ships forming the formation.
 	 */
-	private List<List<EnemyShip>> enemyShips;
+	private final List<List<EnemyShip>> enemyShips;
+	/**
+	 * List of summon enemy ship
+	 */
+	private List<List<EnemyShip>> summonShips;
 	/**
 	 * Minimum time between shots.
 	 */
@@ -104,19 +113,19 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/**
 	 * Number of ships in the formation - horizontally.
 	 */
-	private int nShipsWide;
+	private final int nShipsWide;
 	/**
 	 * Number of ships in the formation - vertically.
 	 */
-	private int nShipsHigh;
+	private final int nShipsHigh;
 	/**
 	 * Time between shots.
 	 */
-	private int shootingInterval;
+	private final int shootingInterval;
 	/**
 	 * Variance in the time between shots.
 	 */
-	private int shootingVariance;
+	private final int shootingVariance;
 	/**
 	 * Initial ship speed.
 	 */
@@ -156,19 +165,21 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/**
 	 * Width of one ship.
 	 */
-	private int shipWidth;
+	private final int shipWidth;
 	/**
 	 * Height of one ship.
 	 */
-	private int shipHeight;
+	private final int shipHeight;
 	/**
 	 * List of ships that are able to shoot.
 	 */
-	private List<EnemyShip> shooters;
+	private final List<EnemyShip> shooters;
 	/**
 	 * Number of not destroyed ships.
 	 */
 	private int shipCount;
+
+	private int SummonCount = 2;
 
 	/**
 	 * Directions the formation can move.
@@ -190,6 +201,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		DOWN
 	}
 
+	private int rushDistance = 0;
 
 	/**
 	 * Constructor, sets the initial conditions.
@@ -200,6 +212,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.drawManager = Core.getDrawManager();
 		this.logger = Core.getLogger();
 		this.enemyShips = new ArrayList<List<EnemyShip>>();
+		this.summonShips = new ArrayList<List<EnemyShip>>();
 		this.currentDirection = Direction.RIGHT;
 		this.movementInterval = 0;
 		this.nShipsWide = gameSettings.getFormationWidth();
@@ -216,11 +229,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
 				+ " ship formation in (" + positionX + "," + positionY + ")");
-
+		/** ooo    nships = 3 nshipshigh=2
+		 *  ooo
+		 */
 		// Each sub-list is a column on the formation.
 		for (int i = 0; i < this.nShipsWide; i++)
 			this.enemyShips.add(new ArrayList<EnemyShip>());
-
 		for (List<EnemyShip> column : this.enemyShips) {
 			Current_Level = gameSettings.getLevel();
 			for (int i = 0; i < this.nShipsHigh; i++) {
@@ -291,6 +305,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * Updates the position of the ships.
 	 */
 	public final void update() {
+		SpriteType spriteType;
 		if (this.shootingCooldown == null) {
 			this.shootingCooldown = Core.getVariableCooldown(shootingInterval,
 					shootingVariance);
@@ -298,6 +313,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		}
 
 		cleanUp();
+		int fixed_mvX = 90;
+		int fixed_mvY = 10;
 		int inverse = 0;
 		int movementX = 0;
 		int movementY = 0;
@@ -305,8 +322,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		double remainingProportion = (double) this.shipCount
 				/ (this.nShipsHigh * this.nShipsWide);
 
-		this.movementSpeed = (double) (Math.pow(remainingProportion, 2)
-				* this.baseSpeed);
+		this.movementSpeed = Math.pow(remainingProportion, 2)
+				* this.baseSpeed;
 
 		if (baseSpeed > 0)
 			this.movementSpeed += MINIMUM_SPEED;
@@ -318,6 +335,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			boolean isAtTop = positionY + this.height <= BOTTOM_MARGIN;
 			boolean isAtBottom = positionY
 					+ this.height > screen.getHeight() - BOTTOM_MARGIN;
+			boolean reachAtBottom = positionY
+					+ this.height == screen.getHeight() - BOTTOM_MARGIN;
 			boolean isAtRightSide = positionX
 					+ this.width >= screen.getWidth() - SIDE_MARGIN;
 			boolean isAtLeftSide = positionX <= SIDE_MARGIN;
@@ -357,11 +376,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 			if (currentDirection == Direction.RIGHT)
 				movementX = X_SPEED;
-			else if (currentDirection == Direction.LEFT)
+			else if (currentDirection == Direction.LEFT) {
 				movementX = -X_SPEED;
-
+				fixed_mvX *= -1;
+			}
 			else
 				movementY = Y_SPEED;
+
 
 			positionX += movementX;
 			positionY += movementY;
@@ -382,29 +403,121 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.removeAll(destroyed);
 			}
 
+			if (countAtBottom()==6) {
+				System.out.println(countAtBottom());
+				this.summonShips.add(new ArrayList<EnemyShip>());
+				for (List<EnemyShip> summonShips : this.enemyShips){
+					spriteType = SpriteType.EnemyShipA1;
+					summonShips.add(new EnemyShip((SEPARATION_DISTANCE
+							* this.enemyShips.indexOf(summonShips))
+							+ positionX,
+							(SEPARATION_DISTANCE)
+									+ positionY +(SEPARATION_DISTANCE * SummonCount), spriteType));
+					this.shipCount++;
+					System.out.println(SummonCount);
+				}
+				SummonCount += 1;
+			}
 			if (isAtBottom) {
 				positionY = positionY * (-1);
 				inverse = 1;
-			} else if (isAtTop)
+				fixed_mvY *= -1;
+			} else if (isAtTop) {
+
 				inverse = 0;
+			}
+
+//			if (positionY < 150 && inverse == 0 && Current_Level == 8 && rushDistance <= 0 && Math.random() < 0.02) {
+//				this.logger.info("Rush Start!");
+//				rushDistance = 30;
+//			}
+			int rand = 0;
+			if (Current_Level == 8) {
+				rand = random("98","1","1","1","2","3");
+
+				if (inverse == 0) {
+					movementY += SPEED_CONTROL;
+
+				} else if (inverse == 1) {
+					movementY += SPEED_CONTROL * (-1);
+
+				}
+
+				if (rushDistance > 0) {
+					this.logger.info("Rush Start!");
+					movementY *= 10;
+					movementX /= 2;
+					rushDistance--;
+				}
+			}
 
 			for (List<EnemyShip> column : this.enemyShips) {
-
 				for (EnemyShip enemyShip : column) {
-					if (Current_Level == 8) {
-						if (inverse == 0) {
-							movementY = SPEED_CONTROL;
-
-						} else if (inverse == 1) {
-							movementY = SPEED_CONTROL * (-1);
-
-						}
+					switch (rand) {
+						case 2:
+							if (positionY < 150 && inverse == 0 && rushDistance <= 0) {
+								rushDistance = 30;
+							}
+							enemyShip.move(movementX,movementY);
+						case 3:
+							enemyShip.move(fixed_mvX, fixed_mvY);
+							break;
+						default:
+							enemyShip.move(movementX,movementY);
 					}
-					enemyShip.move(movementX, movementY);
 					enemyShip.update();
 				}
 			}
 		}
+	}
+	private int random(String rate1, String rate2, String rate3, String rs1, String rs2, String rs3){
+		double tmpRandom = (Math.random() * 100);
+		double tmpRatePrev = 0, tmpRateNext = 0;
+		int result = 0;
+		//소수 둘째자리까지 절삭
+		tmpRandom = Math.round(tmpRandom * 100) / 100.0;
+
+		HashMap<String, String> map = new HashMap<String, String>();
+		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
+
+		map.put("rate", rate1);
+		map.put("value", rs1);
+		list.add(map);
+
+		map = new HashMap<String, String>();
+
+		map.put("rate", rate2);
+		map.put("value", rs2);
+		list.add(map);
+		map = new HashMap<String, String>();
+
+
+		map.put("rate", rate3);
+		map.put("value", rs3);
+		list.add(map);
+		map = new HashMap<String, String>();
+
+		map.clear();
+		map = new HashMap<String, String>();
+
+
+		for(int i = 0; i < list.size(); i++) {
+			if(tmpRandom == 100) {
+				//만약 난수가 100이라면 가장 마지막에있는 list 인덱스에 있는 value 적용
+				result = Integer.parseInt(list.get(list.size()-1).get("value"));
+				break;
+			} else {
+				double rate = Double.parseDouble(list.get(i).get("rate"));
+				tmpRateNext = tmpRatePrev + rate;
+				if(tmpRandom >= tmpRatePrev && tmpRandom < tmpRateNext) {
+					result = Integer.parseInt(list.get(i).get("value"));
+					break;
+				} else {
+					tmpRatePrev = tmpRateNext;
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -450,6 +563,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.positionY = minPositionY;
 	}
 
+	public final int random_speed() { return (int) (Math.random()*1000); }
+
 	/**
 	 * Shoots a bullet downwards.
 	 *
@@ -483,6 +598,14 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					bullets.add(BulletPool.getBullet(shooter.getPositionX()
 							+ shooter.width / 2, shooter.getPositionY(), 4));
 				}
+
+				if (this.Current_Level == 8) {
+					if (this.shootingCooldown.checkFinished()) {
+						this.shootingCooldown.reset();
+						bullets.add(BulletPool.getBullet(shooter.getPositionX()
+								+ shooter.width / 2, shooter.getPositionY(), random_speed()));
+					}
+				}
 				break;
 		}
 	}
@@ -496,7 +619,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		for (List<EnemyShip> column : this.enemyShips)
 			for (int i = 0; i < column.size(); i++)
 				if (column.get(i).equals(destroyedShip)) {
-					if(this.Current_Level == 8) {
+					if(Current_Level == 8) {
 						destroyedShip.bossLives--;
 						if (destroyedShip.bossLives == 0) {
 							column.get(i).destroy();
@@ -591,5 +714,16 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 	public void setMovementSpeed(double setmovementspeed) {
 		baseSpeed = setmovementspeed;
+	}
+	int count=1;
+	public int countAtBottom(){
+		boolean reachAtBottom = positionY
+				+ this.height == screen.getHeight() - BOTTOM_MARGIN;
+		if (reachAtBottom)
+			if (count == 7)
+				count=0;
+			else
+				count+=1;
+		return count;
 	}
 }
