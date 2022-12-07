@@ -3,6 +3,9 @@ package entity;
 import java.awt.Color;
 
 import engine.DrawManager.SpriteType;
+import engine.GameSettings;
+
+
 
 /**
  * Implements a bullet that moves vertically up or down.
@@ -17,6 +20,8 @@ public class Bullet extends Entity {
 	 * positive is down.
 	 */
 	private int speed;
+
+	private static int Current_Level = 0;
 	Color[] colors = {Color.WHITE, Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.BLUE};
 
 	/**
@@ -31,9 +36,11 @@ public class Bullet extends Entity {
 	 *            direction - positive is down.
 	 */
 	public Bullet(final int positionX, final int positionY, final int speed) {
+
 		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
 
 		this.speed = speed;
+
 		setSprite();
 	}
 
@@ -41,9 +48,13 @@ public class Bullet extends Entity {
 	 * Sets correct sprite for the bullet, based on speed.
 	 */
 	public final void setSprite() {
+
 		if (speed < 0) {
 			this.spriteType = SpriteType.Bullet;
 			this.setColor(colors[(int) ((Math.random() * (12 - 1)) + 1)]);
+		}
+		else if (Current_Level == 8){
+			this.setColor(Color.RED);
 		}
 		else {
 			this.spriteType = SpriteType.EnemyBullet;
