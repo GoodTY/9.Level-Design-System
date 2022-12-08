@@ -470,7 +470,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			}
 		}
 	}
-	private int random(String rate1, String rate2, String rate3, String rs1, String rs2, String rs3){
+	public int random(String rate1, String rate2, String rate3, String rs1, String rs2, String rs3){
 		double tmpRandom = (Math.random() * 100);
 		double tmpRatePrev = 0, tmpRateNext = 0;
 		int result = 0;
